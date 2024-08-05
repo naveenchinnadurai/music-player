@@ -1,14 +1,16 @@
 'use client'
+import AudioContainer from '@/components/audioContainer';
 import AudioPlayer from '@/components/audioPlayer';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/context/userContext';
+import { CircleUserRound, LogOut } from 'lucide-react';
 import React, { useState, useRef } from 'react';
 
 const VoiceRecorder = () => {
     const { user } = useUser();
     const [recording, setRecording] = useState(false);
     const [playAudio, setPlayAudio] = useState(false);
-    const [audios, setAudios] = useState<string[]>([]);
+    const [audios, setAudios] = useState<string[]>(["helo", "hii", "workd", "helo", "hii", "workd", "helo", "hii", "workd", "helo", "hii", "workd"]);
     const [audioURL, setAudioURL] = useState<string>("");
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
@@ -40,31 +42,35 @@ const VoiceRecorder = () => {
     };
 
     return (
-        <div className="bg-red-400 relative h-[100vh] w-full flex flex-col justify-between">
-            <div className='h-full w-full flex'>
-                <div className='bg-red-500 flex justify-center items-center h-full w-3/4'>
-                    { user?.name }
+        <div className="p-2 pb-0 space-y-2 bg-zinc-900 relative h-[100vh] w-full flex flex-col justify-between">
+            <div className='h-[80vh] w-full flex space-x-2'>
+                <div className="bg-zinc-800 p-5 rounded-xl">
+                    <CircleUserRound className='text-white text-3xl' />
+                    <LogOut className='text-white' />
+                </div>
+                <div className='bg-zinc-800 flex rounded-xl justify-center items-center h-full w-3/4'>
+                    {user?.name}
                     <Button onClick={recording ? stopRecording : startRecording} className={`p-2 rounded ${recording ? 'bg-red-500' : 'bg-green-500'} text-white w-fit`}>
                         {recording ? 'Stop Recording' : 'Start Recording'}
                     </Button>
                 </div>
-                <div className="w-1/4 bg-slate-700 p-3 flex flex-col">
-                    <h1 className='text-center'>Your Audios</h1>
-                    {
-                        audios.length === 0 ? (
-                            <h1>No Audio Found</h1>
-                        ) : audios.map((e, i) => {
-                            return (
-                                <Button key={i} onClick={() => { setAudioURL(e); setPlayAudio(true) }} className='mt-3'>Audio {i + 1}</Button>
-                            )
-                        })
-                    }
+                <div className="w-1/4 bg-zinc-800 rounded-xl p-3 flex flex-col h-full">
+                    <h1 className='text-center mb-3 text-white'>Your Audios</h1>
+                    <div className="overflow-auto h-full w-full p-0 space-y-2">
+                        {
+                            audios.length === 0 ? (
+                                <h1>No Audio Found</h1>
+                            ) : audios.map((e, i) => {
+                                return (
+                                    <AudioContainer key={i} handleClick={() => { setAudioURL(e); setPlayAudio(true) }} style='w-full' />
+                                )
+                            })
+                        }
+                    </div>
                 </div>
             </div>
-            <div className="pb-8 pt-5 bg-slate-500">
-                {audioURL && (
-                    <AudioPlayer src={audioURL} />
-                )}
+            <div className="bg-zinc-800 rounded-t-xl h-[20vh] p-5">
+                <AudioPlayer src={audioURL} />
             </div>
         </div>
     );
